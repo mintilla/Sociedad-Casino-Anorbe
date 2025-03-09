@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Configuraciones</h1>
+<form method="POST">
+    <div class="mb-3">
+        <label for="aforo_maximo" class="form-label">Aforo Máximo por Día</label>
+        <input type="number" class="form-control" id="aforo_maximo" name="aforo_maximo" value="{{ aforo_maximo }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="limite_hornos" class="form-label">Límite de Hornos por Día</label>
+        <input type="number" class="form-control" id="limite_hornos" name="limite_hornos" value="{{ limite_hornos }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="max_dias_antelacion" class="form-label">Máximo Días de Antelación</label>
+        <input type="number" class="form-control" id="max_dias_antelacion" name="max_dias_antelacion" value="{{ max_dias_antelacion }}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar Configuraciones</button>
+</form>
+{% endblock %}

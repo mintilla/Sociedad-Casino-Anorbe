@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Calendario de Reservas</h1>
+<div id="calendar"></div>
+
+<!-- Modal para reservar -->
+<div class="modal fade" id="reservaModal" tabindex="-1" aria-labelledby="reservaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reservaModalLabel">Nueva Reserva</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reservaForm">
+                    <div class="mb-3">
+                        <label for="tipoEvento" class="form-label">Tipo de Evento</label>
+                        <select class="form-select" id="tipoEvento" required>
+                            <option value="almuerzo">Almuerzo</option>
+                            <option value="comida">Comida</option>
+                            <option value="merienda">Merienda</option>
+                            <option value="cena">Cena</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comensales" class="form-label">Número de Comensales</label>
+                        <input type="number" class="form-control" id="comensales" min="1" max="50" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="usaHorno">
+                        <label class="form-check-label" for="usaHorno">Usar Horno</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="emailNotificacion" class="form-label">Email para Notificaciones (opcional)</label>
+                        <input type="email" class="form-control" id="emailNotificacion">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Reservar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts para FullCalendar y reservas -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            dateClick: function(info) {
+                // Abrir modal al hacer clic en una fecha
+                $('#reservaModal').modal('show');
+                // Guardar la fecha seleccionada
+                document.getElementById('reservaForm').dataset.fecha = info.dateStr;
+            },
+            events: '/api/reservas'
+        });
+        calendar.render();
+
+        // Manejar el envío del formulario de reserva
+        document.getElementById('reservaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fecha = this.dataset.fecha;
+            const tipoEvento = document.getElementById('tipoEvento').value;
+            const comensales = parseInt(document.getElementById('comensales').value);
+            const usaHorno = document.getElementById('usaHorno').checked;
+            const emailNotificacion = document.getElementById('emailNotificacion').value;
+
+            fetch('/api/reservas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    fecha: fecha,
+                    tipo_evento: tipoEvento,
+                    comensales: comensales,
+                    usa_horno: usaHorno,
+                    email_notificacion: emailNotificacion
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.message || 'Reserva creada exitosamente');
+                $('#reservaModal').modal('hide');
+                calendar.refetchEvents(); // Actualizar el calendario
+            })
+            .catch(error => {
+                alert(error.error || 'Error al realizar la reserva');
+            });
+        });
+    });
+</script>
+{% endblock %}

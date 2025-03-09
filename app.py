@@ -296,4 +296,4 @@ def admin_configuraciones():
     return render_template('admin_configuraciones.html', aforo_maximo=aforo_maximo, limite_hornos=limite_hornos, max_dias_antelacion=max_dias_antelacion)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000)

@@ -252,21 +252,28 @@ def admin_reservas():
     reservas = Reserva.query.all()
     return render_template('admin_reservas.html', reservas=reservas)
 
-@app.route('/admin/borrar-reserva/<int:reserva_id>', methods=['POST'])
+@app.route('/borrar-reserva/<int:reserva_id>', methods=['POST'])
 @login_required
 def borrar_reserva(reserva_id):
-    if not current_user.es_admin:
-        flash('No tienes permisos de administrador', 'error')
-        return redirect(url_for('index'))
-
     reserva = Reserva.query.get(reserva_id)
-    if reserva:
+    if not reserva:
+        flash('Reserva no encontrada', 'error')
+        return redirect(url_for('admin_reservas'))
+
+    # Permitir que los administradores borren cualquier reserva
+    # o que los socios borren solo sus propias reservas
+    if current_user.es_admin or reserva.user_id == current_user.id:
         db.session.delete(reserva)
         db.session.commit()
         flash('Reserva borrada exitosamente', 'success')
     else:
-        flash('Reserva no encontrada', 'error')
-    return redirect(url_for('admin_reservas'))
+        flash('No tienes permisos para borrar esta reserva', 'error')
+
+    # Redirigir a la página de reservas del administrador o del socio
+    if current_user.es_admin:
+        return redirect(url_for('admin_reservas'))
+    else:
+        return redirect(url_for('calendar'))
 
 @app.route('/admin/configuraciones', methods=['GET', 'POST'])
 @login_required

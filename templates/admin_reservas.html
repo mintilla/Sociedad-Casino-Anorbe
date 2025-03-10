@@ -18,7 +18,7 @@
         <tr>
             <td>{{ loop.index }}</td>
             <td>{{ reserva.fecha.strftime('%Y-%m-%d %H:%M') }}</td>
-            <td>{{ reserva.user.username }}</td>
+            <td>{{ reserva.usuario.username }}</td>  <!-- Cambiado de reserva.user a reserva.usuario -->
             <td>{{ reserva.tipo_evento }}</td>
             <td>{{ reserva.comensales }}</td>
             <td>{{ 'Sí' if reserva.usa_horno else 'No' }}</td>

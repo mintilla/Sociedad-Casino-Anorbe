@@ -42,6 +42,18 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Reservar</button>
                 </form>
+                <hr>
+                <h5>Mis Reservas</h5>
+                <ul id="misReservas">
+                    {% for reserva in current_user.reservas %}
+                    <li>
+                        {{ reserva.fecha.strftime('%Y-%m-%d %H:%M') }} - {{ reserva.tipo_evento }}
+                        <form action="{{ url_for('borrar_reserva', reserva_id=reserva.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Borrar</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>

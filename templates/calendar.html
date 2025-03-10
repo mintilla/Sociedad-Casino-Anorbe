@@ -59,6 +59,19 @@
     </div>
 </div>
 
+<!-- Listado de reservas del mes -->
+<h3>Reservas del Mes</h3>
+<ul id="reservasMes">
+    {% for reserva in reservas_mes %}
+    <li>
+        {{ reserva.fecha.strftime('%Y-%m-%d %H:%M') }} - {{ reserva.usuario.username }} - {{ reserva.tipo_evento }} ({{ reserva.comensales }} personas)
+        <form action="{{ url_for('borrar_reserva', reserva_id=reserva.id) }}" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-danger btn-sm">Borrar</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+
 <!-- Scripts para FullCalendar y reservas -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -72,7 +85,13 @@
                 // Guardar la fecha seleccionada
                 document.getElementById('reservaForm').dataset.fecha = info.dateStr;
             },
-            events: '/api/reservas'
+            events: '/api/reservas',
+            eventDidMount: function(info) {
+                // Eliminar el "0" delante del nombre del usuario
+                if (info.event.title.startsWith('0 ')) {
+                    info.event.setProp('title', info.event.title.slice(2));
+                }
+            }
         });
         calendar.render();
 
@@ -108,6 +127,7 @@
                 alert(data.message || 'Reserva creada exitosamente');
                 $('#reservaModal').modal('hide');
                 calendar.refetchEvents(); // Actualizar el calendario
+                location.reload(); // Recargar la página para asegurar la actualización
             })
             .catch(error => {
                 alert(error.error || 'Error al realizar la reserva');

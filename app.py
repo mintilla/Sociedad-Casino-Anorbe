@@ -34,6 +34,7 @@ class Reserva(db.Model):
     comensales = db.Column(db.Integer, nullable=False)  # Número de comensales
     usa_horno = db.Column(db.Boolean, default=False)  # ¿Se usará el horno?
     email_notificacion = db.Column(db.String(120))  # Email para notificaciones
+    fecha_creacion = db.Column(db.DateTime, default=datetime.now)  # Fecha y hora de creación de la reserva
 
 # Modelo de Configuración
 class Configuracion(db.Model):
@@ -116,8 +117,15 @@ def calendar():
     aforo_maximo = Configuracion.query.filter_by(clave='aforo_maximo').first().valor
     limite_hornos = Configuracion.query.filter_by(clave='limite_hornos').first().valor
 
-    # Pasar configuraciones a la plantilla
-    return render_template('calendar.html', configuracion={'aforo_maximo': aforo_maximo, 'limite_hornos': limite_hornos})
+    # Obtener reservas del mes actual
+    hoy = datetime.today()
+    reservas_mes = Reserva.query.filter(
+        db.extract('year', Reserva.fecha) == hoy.year,
+        db.extract('month', Reserva.fecha) == hoy.month
+    ).all()
+
+    # Pasar configuraciones y reservas a la plantilla
+    return render_template('calendar.html', configuracion={'aforo_maximo': aforo_maximo, 'limite_hornos': limite_hornos}, reservas_mes=reservas_mes)
 
 @app.route('/api/reservas')
 @login_required
@@ -126,7 +134,7 @@ def get_reservas():
     eventos = []
     for reserva in reservas:
         eventos.append({
-            'title': f'{reserva.usuario.username} - {reserva.tipo_evento} ({reserva.comensales} personas)',
+            'title': f'{reserva.usuario.username} - {reserva.tipo_evento} ({reserva.comensales} personas)',  # Eliminamos el "0"
             'start': reserva.fecha.isoformat(),
             'description': f'Horno: {"Sí" if reserva.usa_horno else "No"}'
         })
@@ -169,14 +177,15 @@ def crear_reserva():
         if hornos_del_dia >= limite_hornos:
             return jsonify({'error': 'Límite de hornos alcanzado para este día'}), 400
 
-    # Crear la reserva
+    # Crear la reserva con la fecha y hora actual
     nueva_reserva = Reserva(
         user_id=current_user.id,
         fecha=fecha,
         tipo_evento=tipo_evento,
         comensales=comensales,
         usa_horno=usa_horno,
-        email_notificacion=email_notificacion
+        email_notificacion=email_notificacion,
+        fecha_creacion=datetime.now()  # Guardar la fecha y hora actual
     )
     db.session.add(nueva_reserva)
     db.session.commit()

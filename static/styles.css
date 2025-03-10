@@ -14,10 +14,17 @@ body {
     background-color: #007bff;
     border-color: #007bff;
 }
+
 /* Estilo para el enlace activo en el menú */
 .nav-link.active {
     font-weight: bold;
     color: #007bff !important; /* Cambia el color a azul */
     background-color: #f8f9fa; /* Fondo claro */
     border-radius: 5px; /* Bordes redondeados */
+}
+
+/* Estilo para el pie de página */
+footer {
+    text-align: center;  /* Centra el texto dentro del pie de página */
+    margin-top: 20px;    /* Añade un margen superior para separar el pie de página del contenido */
 }

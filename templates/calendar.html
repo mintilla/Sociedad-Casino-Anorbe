@@ -21,13 +21,10 @@
                             <option value="merienda">Merienda</option>
                             <option value="cena">Cena</option>
                         </select>
-                        <small class="form-text text-muted">
-                            Selecciona el tipo de evento para el que deseas hacer la reserva.
-                        </small>
                     </div>
                     <div class="mb-3">
                         <label for="comensales" class="form-label">Número de Comensales</label>
-                        <input type="number" class="form-control" id="comensales" min="1" max="50" required>
+                        <input type="number" class="form-control" id="comensales" min="1" max="{{ configuracion.aforo_maximo }}" required>
                         <small class="form-text text-muted">
                             El aforo máximo por evento es de {{ configuracion.aforo_maximo }} personas.
                         </small>
@@ -42,9 +39,6 @@
                     <div class="mb-3">
                         <label for="emailNotificacion" class="form-label">Email para Notificaciones (opcional)</label>
                         <input type="email" class="form-control" id="emailNotificacion">
-                        <small class="form-text text-muted">
-                            Recibirás una notificación si se libera un espacio.
-                        </small>
                     </div>
                     <button type="submit" class="btn btn-primary">Reservar</button>
                 </form>

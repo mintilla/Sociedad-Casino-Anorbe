@@ -35,9 +35,6 @@ class Reserva(db.Model):
     usa_horno = db.Column(db.Boolean, default=False)  # ¿Se usará el horno?
     email_notificacion = db.Column(db.String(120))  # Email para notificaciones
 
-    # Relación con el modelo User
-    user = db.relationship('User', backref='reservas_usuario', lazy=True)
-
 # Modelo de Configuración
 class Configuracion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -115,7 +112,12 @@ def elegir_contrasena():
 @app.route('/calendar')
 @login_required
 def calendar():
-    return render_template('calendar.html')
+    # Obtener configuraciones desde la base de datos
+    aforo_maximo = Configuracion.query.filter_by(clave='aforo_maximo').first().valor
+    limite_hornos = Configuracion.query.filter_by(clave='limite_hornos').first().valor
+
+    # Pasar configuraciones a la plantilla
+    return render_template('calendar.html', configuracion={'aforo_maximo': aforo_maximo, 'limite_hornos': limite_hornos})
 
 @app.route('/api/reservas')
 @login_required

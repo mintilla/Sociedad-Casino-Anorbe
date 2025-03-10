@@ -150,17 +150,20 @@ def crear_reserva():
     if dias_antelacion > max_dias_antelacion:
         return jsonify({'error': f'No se pueden hacer reservas con más de {max_dias_antelacion} días de antelación'}), 400
 
-    # Validar aforo máximo
+    # Validar aforo máximo por evento
     aforo_maximo = int(Configuracion.query.filter_by(clave='aforo_maximo').first().valor)
-    reservas_del_dia = Reserva.query.filter(db.func.date(Reserva.fecha) == fecha.date()).all()
-    total_comensales = sum(r.comensales for r in reservas_del_dia)
+    reservas_del_evento = Reserva.query.filter(
+        db.func.date(Reserva.fecha) == fecha.date(),
+        Reserva.tipo_evento == tipo_evento
+    ).all()
+    total_comensales = sum(r.comensales for r in reservas_del_evento)
     if total_comensales + comensales > aforo_maximo:
-        return jsonify({'error': 'Aforo máximo alcanzado para este día'}), 400
+        return jsonify({'error': f'Aforo máximo alcanzado para {tipo_evento}'}), 400
 
     # Validar límite de hornos
     if usa_horno:
         limite_hornos = int(Configuracion.query.filter_by(clave='limite_hornos').first().valor)
-        hornos_del_dia = sum(1 for r in reservas_del_dia if r.usa_horno)
+        hornos_del_dia = sum(1 for r in reservas_del_evento if r.usa_horno)
         if hornos_del_dia >= limite_hornos:
             return jsonify({'error': 'Límite de hornos alcanzado para este día'}), 400
 

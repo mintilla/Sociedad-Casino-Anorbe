@@ -3,16 +3,25 @@
 <h1>Configuraciones</h1>
 <form method="POST">
     <div class="mb-3">
-        <label for="aforo_maximo" class="form-label">Aforo Máximo por Día</label>
+        <label for="aforo_maximo" class="form-label">Aforo Máximo por Evento</label>
         <input type="number" class="form-control" id="aforo_maximo" name="aforo_maximo" value="{{ aforo_maximo }}" required>
+        <small class="form-text text-muted">
+            Número máximo de comensales permitidos por evento (almuerzo, comida, merienda o cena).
+        </small>
     </div>
     <div class="mb-3">
         <label for="limite_hornos" class="form-label">Límite de Hornos por Día</label>
         <input type="number" class="form-control" id="limite_hornos" name="limite_hornos" value="{{ limite_hornos }}" required>
+        <small class="form-text text-muted">
+            Número máximo de hornos que se pueden usar en un mismo día.
+        </small>
     </div>
     <div class="mb-3">
         <label for="max_dias_antelacion" class="form-label">Máximo Días de Antelación</label>
         <input type="number" class="form-control" id="max_dias_antelacion" name="max_dias_antelacion" value="{{ max_dias_antelacion }}" required>
+        <small class="form-text text-muted">
+            Número máximo de días de antelación para hacer una reserva.
+        </small>
     </div>
     <button type="submit" class="btn btn-primary">Guardar Configuraciones</button>
 </form>

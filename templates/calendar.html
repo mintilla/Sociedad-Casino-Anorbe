@@ -21,18 +21,30 @@
                             <option value="merienda">Merienda</option>
                             <option value="cena">Cena</option>
                         </select>
+                        <small class="form-text text-muted">
+                            Selecciona el tipo de evento para el que deseas hacer la reserva.
+                        </small>
                     </div>
                     <div class="mb-3">
                         <label for="comensales" class="form-label">Número de Comensales</label>
                         <input type="number" class="form-control" id="comensales" min="1" max="50" required>
+                        <small class="form-text text-muted">
+                            El aforo máximo por evento es de {{ configuracion.aforo_maximo }} personas.
+                        </small>
                     </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="usaHorno">
                         <label class="form-check-label" for="usaHorno">Usar Horno</label>
+                        <small class="form-text text-muted">
+                            Límite de {{ configuracion.limite_hornos }} hornos por día.
+                        </small>
                     </div>
                     <div class="mb-3">
                         <label for="emailNotificacion" class="form-label">Email para Notificaciones (opcional)</label>
                         <input type="email" class="form-control" id="emailNotificacion">
+                        <small class="form-text text-muted">
+                            Recibirás una notificación si se libera un espacio.
+                        </small>
                     </div>
                     <button type="submit" class="btn btn-primary">Reservar</button>
                 </form>
